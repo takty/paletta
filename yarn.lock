@@ -779,7 +779,7 @@ color-name@~1.1.4:
 
 "colorjst@github:takty/colorjst":
   version "1.0.0"
-  resolved "https://codeload.github.com/takty/colorjst/tar.gz/81941c18f14784057d31b64f74c66e3ad4a8d685"
+  resolved "https://codeload.github.com/takty/colorjst/tar.gz/e630fb17bbd6cabd0ba82387b88e44f60e06bef0"
   dependencies:
     esbuild "^0.23.0"
     esbuild-sass-plugin "^3.3.1"
