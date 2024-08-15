@@ -34,16 +34,9 @@
 	}
 
 	function updated(cs: ColorSpace, idx: number, v: number): void {
-		let t;
-		switch (cs) {
-			case ColorSpace.RGB    : t = ms[current].asRGB(); t[idx] = v; ms[current].set(cs, t); break;
-			case ColorSpace.Lab    : t = ms[current].asLab(); t[idx] = v; ms[current].set(cs, t); break;
-			case ColorSpace.LCh    : t = ms[current].asLCh(); t[idx] = v; ms[current].set(cs, t); break;
-			case ColorSpace.Yxy    : t = ms[current].asYxy(); t[idx] = v; ms[current].set(cs, t); break;
-			case ColorSpace.Munsell: t = ms[current].asMunsell(); t[idx] = v; ms[current].set(cs, t); break;
-			case ColorSpace.PCCS   : t = ms[current].asPCCS(); t[idx] = v; ms[current].set(cs, t); break;
-			case ColorSpace.Tone   : t = ms[current].asTone(); t[idx] = v; ms[current].set(cs, t); break;
-		}
+		const t = ms[current].as(cs);
+		t[idx] = v;
+		ms[current].set(cs, t);
 		updateValues();
 	}
 
