@@ -1,22 +1,24 @@
 import { Color, ColorSpace } from 'colorjst/src/colorjst';
+import { Chart } from '$lib/chart';
 
+type Pair = [number, number];
 type Triplet = [number, number, number];
 
-export class ChartLab {
+export class ChartLab extends Chart {
 
-	public static setTriplet(c: Color, t: Triplet) {
+	public setTriplet(c: Color, t: Triplet): void {
 		c.set(ColorSpace.Lab, t);
 	}
 
-	public static getTriplet(c: Color) {
+	public getTriplet(c: Color): Triplet {
 		return c.asLab();
 	}
 
-	public static getMapZ(c: Color): number {
+	public getMapZ(c: Color): number {
 		return 0 | c.asLab()[0];
 	}
 
-	public static getMapZLevel(base: Color, c: Color) {
+	public getMapZLevel(base: Color, c: Color) {
 		const x = c.asLab()[0];
 		const o = base.asLab()[0];
 
@@ -28,7 +30,7 @@ export class ChartLab {
 	static HX = 128;
 	static HY = 128;
 
-	public static cToXy(c: Color) {
+	public cToXy(c: Color): Pair {
 		const t = c.asLab();
 		return [
 			((t[1] / (2 * ChartLab.HX) + 0.5)),
@@ -36,7 +38,7 @@ export class ChartLab {
 		];
 	}
 
-	public static xyToC(base: Color, x: number, y: number, dest: Color): void {
+	public xyToC(base: Color, x: number, y: number, dest: Color): void {
 		const tb = base.asLab();
 		const tn = [
 			tb[0],
@@ -46,7 +48,7 @@ export class ChartLab {
 		dest.set(ColorSpace.Lab, tn);
 	}
 
-	public static dToC(base: Color, d: number, dest: Color): void {
+	public dToC(base: Color, d: number, dest: Color): void {
 		const tb = base.asLab();
 		let ls = tb[0] + (d > 0 ? 1 : -1);
 		if (ls < 0) ls = 0;

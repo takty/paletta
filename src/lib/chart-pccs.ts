@@ -1,22 +1,24 @@
 import { Color, ColorSpace } from 'colorjst/src/colorjst';
+import { Chart } from '$lib/chart';
 
+type Pair = [number, number];
 type Triplet = [number, number, number];
 
-export class ChartPCCS {
+export class ChartPCCS extends Chart {
 
-	public static setTriplet(c: Color, t: Triplet) {
+	public setTriplet(c: Color, t: Triplet): void {
 		c.set(ColorSpace.PCCS, t);
 	}
 
-	public static getTriplet(c: Color) {
+	public getTriplet(c: Color): Triplet {
 		return c.asPCCS();
 	}
 
-	public static getMapZ(c: Color): number {
+	public getMapZ(c: Color): number {
 		return 0 | c.asPCCS()[0];
 	}
 
-	public static getMapZLevel(base: Color, c: Color) {
+	public getMapZLevel(base: Color, c: Color) {
 		const x = c.asPCCS()[0];
 		const o = base.asPCCS()[0];
 
@@ -27,7 +29,7 @@ export class ChartPCCS {
 
 	static MS = 10;
 
-	public static cToXy(c: Color) {
+	public cToXy(c: Color): Pair {
 		const t = c.asPCCS();
 		if (t[0] === -1 || t[2] === -1) {
 			return [0.5, 0.5];
@@ -39,7 +41,7 @@ export class ChartPCCS {
 		];
 	}
 
-	public static xyToC(base: Color, x: number, y: number, dest: Color): void {
+	public xyToC(base: Color, x: number, y: number, dest: Color): void {
 		const tb = base.asPCCS();
 
 		const xx = x - 0.5, yy = y - 0.5;
@@ -57,7 +59,7 @@ export class ChartPCCS {
 		dest.set(ColorSpace.PCCS, tn);
 	}
 
-	public static dToC(base: Color, d: number, dest: Color): void {
+	public dToC(base: Color, d: number, dest: Color): void {
 		const tb = base.asPCCS();
 		let y = tb[0] + (d > 0 ? 0.1 : -0.1);
 		if (y < 0) y = 0;

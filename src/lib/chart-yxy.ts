@@ -1,22 +1,24 @@
 import { Color, ColorSpace } from 'colorjst/src/colorjst';
+import { Chart } from '$lib/chart';
 
+type Pair = [number, number];
 type Triplet = [number, number, number];
 
-export class ChartYxy {
+export class ChartYxy extends Chart {
 
-	public static setTriplet(c: Color, t: Triplet) {
+	public setTriplet(c: Color, t: Triplet): void {
 		c.set(ColorSpace.Yxy, t);
 	}
 
-	public static getTriplet(c: Color) {
+	public getTriplet(c: Color): Triplet {
 		return c.asYxy();
 	}
 
-	public static getMapZ(c: Color): number {
+	public getMapZ(c: Color): number {
 		return 0 | c.asYxy()[0];
 	}
 
-	public static getMapZLevel(base: Color, c: Color) {
+	public getMapZLevel(base: Color, c: Color) {
 		const x = c.asYxy()[0];
 		const o = base.asYxy()[0];
 
@@ -28,7 +30,7 @@ export class ChartYxy {
 	static MX = 0.85;
 	static MY = 0.85;
 
-	public static cToXy(c: Color) {
+	public cToXy(c: Color): Pair {
 		const t = c.asYxy();
 		return [
 			t[1] / ChartYxy.MX,
@@ -36,7 +38,7 @@ export class ChartYxy {
 		];
 	}
 
-	public static xyToC(base: Color, x: number, y: number, dest: Color): void {
+	public xyToC(base: Color, x: number, y: number, dest: Color): void {
 		const tb = base.asYxy();
 		const tn = [
 			tb[0],
@@ -46,7 +48,7 @@ export class ChartYxy {
 		dest.set(ColorSpace.Yxy, tn);
 	}
 
-	public static dToC(base: Color, d: number, dest: Color): void {
+	public dToC(base: Color, d: number, dest: Color): void {
 		const tb = base.asYxy();
 		let y = tb[0] + (d > 0 ? 0.01 : -0.01);
 		if (y < 0) y = 0;

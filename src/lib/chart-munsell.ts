@@ -1,22 +1,24 @@
 import { Color, ColorSpace } from 'colorjst/src/colorjst';
+import { Chart } from '$lib/chart';
 
+type Pair = [number, number];
 type Triplet = [number, number, number];
 
-export class ChartMunsell {
+export class ChartMunsell extends Chart {
 
-	public static setTriplet(c: Color, t: Triplet) {
+	public setTriplet(c: Color, t: Triplet): void {
 		c.set(ColorSpace.Munsell, t);
 	}
 
-	public static getTriplet(c: Color) {
+	public getTriplet(c: Color): Triplet {
 		return c.asMunsell();
 	}
 
-	public static getMapZ(c: Color): number {
+	public getMapZ(c: Color): number {
 		return 0 | c.asMunsell()[1];
 	}
 
-	public static getMapZLevel(base: Color, c: Color) {
+	public getMapZLevel(base: Color, c: Color) {
 		const x = c.asMunsell()[1];
 		const o = base.asMunsell()[1];
 
@@ -27,7 +29,7 @@ export class ChartMunsell {
 
 	static MC = 33;
 
-	public static cToXy(c: Color) {
+	public cToXy(c: Color): Pair {
 		const t = c.asMunsell();
 
 		if (t[0] === -1 || t[2] === -1) {
@@ -40,7 +42,7 @@ export class ChartMunsell {
 		];
 	}
 
-	public static xyToC(base: Color, x: number, y: number, dest: Color): void {
+	public xyToC(base: Color, x: number, y: number, dest: Color): void {
 		const tb = base.asMunsell();
 
 		const xx = x - 0.5, yy = y - 0.5;
@@ -57,7 +59,7 @@ export class ChartMunsell {
 		dest.set(ColorSpace.Munsell, tn);
 	}
 
-	public static dToC(base: Color, d: number, dest: Color): void {
+	public dToC(base: Color, d: number, dest: Color): void {
 		const tb = base.asMunsell();
 		let y = tb[1] + (d > 0 ? 0.1 : -0.1);
 		if (y < 0) y = 0;

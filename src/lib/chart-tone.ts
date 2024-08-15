@@ -1,22 +1,24 @@
 import { Color, ColorSpace } from 'colorjst/src/colorjst';
+import { Chart } from '$lib/chart';
 
+type Pair = [number, number];
 type Triplet = [number, number, number];
 
-export class ChartTone {
+export class ChartTone extends Chart {
 
-	public static setTriplet(c: Color, t: Triplet) {
+	public setTriplet(c: Color, t: Triplet): void {
 		c.set(ColorSpace.Tone, t);
 	}
 
-	public static getTriplet(c: Color) {
+	public getTriplet(c: Color): Triplet {
 		return c.asTone();
 	}
 
-	public static getMapZ(c: Color): number {
+	public getMapZ(c: Color): number {
 		return 0 | c.asTone()[0];
 	}
 
-	public static getMapZLevel(base: Color, c: Color) {
+	public getMapZLevel(base: Color, c: Color) {
 		const x = c.asTone()[0];
 		const o = base.asTone()[0];
 
@@ -28,7 +30,7 @@ export class ChartTone {
 	static MS = 10;
 	static ML = 10;
 
-	public static cToXy(c: Color) {
+	public cToXy(c: Color): Pair {
 		const t = c.asTone();
 		if (t[0] === -1) {
 			return [0, 0];
@@ -39,7 +41,7 @@ export class ChartTone {
 		];
 	}
 
-	public static xyToC(base: Color, x: number, y: number, dest: Color): void {
+	public xyToC(base: Color, x: number, y: number, dest: Color): void {
 		const tb = base.asTone();
 
 		const tn = [
@@ -50,7 +52,7 @@ export class ChartTone {
 		dest.set(ColorSpace.Tone, tn);
 	}
 
-	public static dToC(base: Color, d: number, dest: Color): void {
+	public dToC(base: Color, d: number, dest: Color): void {
 		const tb = base.asTone();
 		let y = tb[0] + (d > 0 ? 0.1 : -0.1);
 		if (y < 0) y = 0;

@@ -1,9 +1,8 @@
 <script lang="ts">
 	import Slider from '$lib/Slider.svelte';
-	import { MultipleColor } from '$lib/MultipleColor';
-	import ColorChart from '$lib/ColorChart.svelte';
+	import ColorChart from '$lib/ChartCanvas.svelte';
 	import { onMount } from 'svelte';
-	import { Evaluation } from 'colorjst/src/colorjst';
+	import { ColorSpace, Color, Evaluation } from 'colorjst/src/colorjst';
 
 	type Triplet = [number, number, number];
 
@@ -18,9 +17,8 @@
 	let munStr  = '';
 	let pccsStr = '';
 
-	const mcL = new MultipleColor();
-	const mcR = new MultipleColor();
-	let curMc: MultipleColor = mcL;
+	const ms = [new Color(), new Color()];
+	let current: number = 0;
 
 	let root: HTMLElement;
 	let btnL: HTMLElement;
@@ -30,55 +28,46 @@
 	let d_ep = '0.00';
 	let d_ed = '0.00';
 
-	$: curTriplet = mun;
-	$: curChart = 'munsell';
-
-	function updatedAll(cs: string, vs: Triplet): void {
-		updated(cs, 0, vs[0]);
-		updated(cs, 1, vs[1]);
-		updated(cs, 2, vs[2]);
+	function updatedAll(c: Color): void {
+		ms[current] = c;
+		updateValues();
 	}
 
-	function updated(cs: string, idx: number, v: number): void {
-		// console.log('updated');
+	function updated(cs: ColorSpace, idx: number, v: number): void {
+		let t;
 		switch (cs) {
-			case 'rgb'    : curMc.setRgb(idx, v); break;
-			case 'lab'    : curMc.setLab(idx, v); break;
-			case 'lch'    : curMc.setLch(idx, v); break;
-			case 'yxy'    : curMc.setYxy(idx, v); break;
-			case 'munsell': curMc.setMunsell(idx, v); break;
-			case 'pccs'   : curMc.setPccs(idx, v); break;
-			case 'tone'   : curMc.setTone(idx, v); break;
+			case ColorSpace.RGB    : t = ms[current].asRGB(); t[idx] = v; ms[current].set(cs, t); break;
+			case ColorSpace.Lab    : t = ms[current].asLab(); t[idx] = v; ms[current].set(cs, t); break;
+			case ColorSpace.LCh    : t = ms[current].asLCh(); t[idx] = v; ms[current].set(cs, t); break;
+			case ColorSpace.Yxy    : t = ms[current].asYxy(); t[idx] = v; ms[current].set(cs, t); break;
+			case ColorSpace.Munsell: t = ms[current].asMunsell(); t[idx] = v; ms[current].set(cs, t); break;
+			case ColorSpace.PCCS   : t = ms[current].asPCCS(); t[idx] = v; ms[current].set(cs, t); break;
+			case ColorSpace.Tone   : t = ms[current].asTone(); t[idx] = v; ms[current].set(cs, t); break;
 		}
 		updateValues();
 	}
 
 	function updateValues() {
-		rgb = curMc.getRgb();
-		lab = curMc.getLab();
-		lch = curMc.getLch();
-		yxy = curMc.getYxy();
+		rgb = ms[current].asRGB();
+		lab = ms[current].asLab();
+		lch = ms[current].asLCh();
+		yxy = ms[current].asYxy();
 
-		mun  = curMc.getMunsell();
-		pccs = curMc.getPccs();
-		tone = curMc.getTone();
+		mun  = ms[current].asMunsell();
+		pccs = ms[current].asPCCS();
+		tone = ms[current].asTone();
 
-		munStr  = curMc.getMunsellNotation();
-		pccsStr = curMc.getPccsNotation();
+		munStr  = ms[current].asMunsellNotation();
+		pccsStr = ms[current].asPCCSNotation();
 
-		if (curMc === mcL) {
-			root.style.setProperty('--colorL', `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
-		}
-		if (curMc === mcR) {
-			root.style.setProperty('--colorR', `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
-		}
+		if (current === 0) root.style.setProperty('--colorL', `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
+		if (current === 1) root.style.setProperty('--colorR', `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`);
 
-		const lab0 = mcL.getLab(), lab1 = mcR.getLab()
-		d_e = Evaluation.differenceBetweenLab(lab0, lab1).toFixed(2);
-		const lab0p = mcL.getLabP(), lab1p = mcR.getLabP();
-		d_ep = Evaluation.differenceBetweenLab(lab0p, lab1p).toFixed(2);
-		const lab0d = mcL.getLabD(), lab1d = mcR.getLabD();
-		d_ed = Evaluation.differenceBetweenLab(lab0d, lab1d).toFixed(2);
+		d_e = Evaluation.differenceBetweenLab(ms[0].asLab(), ms[1].asLab()).toFixed(2);
+		d_ep = Evaluation.differenceBetweenLab(ms[0].toProtanopia().asLab(), ms[1].toProtanopia().asLab()).toFixed(2);
+		d_ed = Evaluation.differenceBetweenLab(ms[0].toDeuteranopia().asLab(), ms[1].toDeuteranopia().asLab()).toFixed(2);
+
+		ms[current] = ms[current];
 	}
 
 	function clickColorBtn(e: Event) {
@@ -88,13 +77,11 @@
 		if (btnL.classList.contains('selected')) {
 			btnL.classList.remove('selected');
 			btnR.classList.add('selected');
-
-			curMc = mcR;
+			current = 1;
 		} else {
 			btnL.classList.add('selected');
 			btnR.classList.remove('selected');
-
-			curMc = mcL;
+			current = 0;
 		}
 		updateValues();
 	}
@@ -116,49 +103,56 @@
 			</div>
 		</div>
 
-		<ColorChart width={256} height={256} value={curTriplet} current={curMc === mcL ? 0 : 1} onUpdate={vs => updatedAll(curChart, vs) }></ColorChart>
+		<ColorChart
+			width={256}
+			height={256}
+			value={ms[current]}
+			bind:current={current}
+			onUpdate={updatedAll}
+			chart="yxy"
+		></ColorChart>
 	</div>
 
 	<div class="columns">
 		<div>
 			<fieldset>
 				<legend>sRGB</legend>
-				<Slider value={rgb[0]} label={'R'} min={0} max={255} onUpdate={v => updated('rgb', 0, v)} />
-				<Slider value={rgb[1]} label={'G'} min={0} max={255} onUpdate={v => updated('rgb', 1, v)} />
-				<Slider value={rgb[2]} label={'B'} min={0} max={255} onUpdate={v => updated('rgb', 2, v)} />
+				<Slider value={rgb[0]} label={'R'} min={0} max={255} onUpdate={v => updated(ColorSpace.RGB, 0, v)} />
+				<Slider value={rgb[1]} label={'G'} min={0} max={255} onUpdate={v => updated(ColorSpace.RGB, 1, v)} />
+				<Slider value={rgb[2]} label={'B'} min={0} max={255} onUpdate={v => updated(ColorSpace.RGB, 2, v)} />
 			</fieldset>
 			<fieldset>
 				<legend>CIELAB (L*a*b*)</legend>
-				<Slider value={lab[0]} label={'L*'} min={0} max={100} onUpdate={v => updated('lab', 0, v)} />
-				<Slider value={lab[1]} label={'a*'} min={-128} max={127} onUpdate={v => updated('lab', 1, v)} />
-				<Slider value={lab[2]} label={'b*'} min={-128} max={127} onUpdate={v => updated('lab', 2, v)} />
+				<Slider value={lab[0]} label={'L*'} min={0} max={100} onUpdate={v => updated(ColorSpace.Lab, 0, v)} />
+				<Slider value={lab[1]} label={'a*'} min={-128} max={127} onUpdate={v => updated(ColorSpace.Lab, 1, v)} />
+				<Slider value={lab[2]} label={'b*'} min={-128} max={127} onUpdate={v => updated(ColorSpace.Lab, 2, v)} />
 				<hr>
-				<Slider value={lch[1]} label={'C*'} min={0} max={181} onUpdate={v => updated('lch', 1, v)} />
-				<Slider value={lch[2]} label={'h'} min={0} max={360} onUpdate={v => updated('lch', 2, v)} />
+				<Slider value={lch[1]} label={'C*'} min={0} max={181} onUpdate={v => updated(ColorSpace.LCh, 1, v)} />
+				<Slider value={lch[2]} label={'h'} min={0} max={360} onUpdate={v => updated(ColorSpace.LCh, 2, v)} />
 			</fieldset>
 			<fieldset>
 				<legend>Yxy</legend>
-				<Slider value={yxy[0]} label={'Y'} min={0} max={1} decimal={2} onUpdate={v => updated('yxy', 0, v)} />
-				<Slider value={yxy[1]} label={'x'} min={0.0050} max={0.85} decimal={4} onUpdate={v => updated('yxy', 1, v)} />
-				<Slider value={yxy[2]} label={'y'} min={0.0050} max={0.85} decimal={4} onUpdate={v => updated('yxy', 2, v)} />
+				<Slider value={yxy[0]} label={'Y'} min={0} max={1} decimal={2} onUpdate={v => updated(ColorSpace.Yxy, 0, v)} />
+				<Slider value={yxy[1]} label={'x'} min={0.0050} max={0.85} decimal={4} onUpdate={v => updated(ColorSpace.Yxy, 1, v)} />
+				<Slider value={yxy[2]} label={'y'} min={0.0050} max={0.85} decimal={4} onUpdate={v => updated(ColorSpace.Yxy, 2, v)} />
 			</fieldset>
 		</div>
 		<div>
 			<fieldset>
 				<legend>Munsell</legend>
-				<Slider value={mun[0]} label={'H'} min={0} max={100} decimal={1} onUpdate={v => updated('munsell', 0, v)} />
-				<Slider value={mun[1]} label={'V'} min={0} max={10} decimal={1} onUpdate={v => updated('munsell', 1, v)} />
-				<Slider value={mun[2]} label={'C'} min={0} max={46.7} decimal={1} onUpdate={v => updated('munsell', 2, v)} />
+				<Slider value={mun[0]} label={'H'} min={0} max={100} decimal={1} onUpdate={v => updated(ColorSpace.Munsell, 0, v)} />
+				<Slider value={mun[1]} label={'V'} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.Munsell, 1, v)} />
+				<Slider value={mun[2]} label={'C'} min={0} max={46.7} decimal={1} onUpdate={v => updated(ColorSpace.Munsell, 2, v)} />
 				<output>{munStr}</output>
 			</fieldset>
 			<fieldset>
 				<legend>PCCS</legend>
-				<Slider value={pccs[0]} label={'h'} min={0} max={24} decimal={1} onUpdate={v => updated('pccs', 0, v)} />
-				<Slider value={pccs[1]} label={'l'} min={0} max={10} decimal={1} onUpdate={v => updated('pccs', 1, v)} />
-				<Slider value={pccs[2]} label={'s'} min={0} max={10} decimal={1} onUpdate={v => updated('pccs', 2, v)} />
+				<Slider value={pccs[0]} label={'h'} min={0} max={24} decimal={1} onUpdate={v => updated(ColorSpace.PCCS, 0, v)} />
+				<Slider value={pccs[1]} label={'l'} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.PCCS, 1, v)} />
+				<Slider value={pccs[2]} label={'s'} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.PCCS, 2, v)} />
 				<hr>
-				<Slider value={tone[0]} label={'h'} min={0} max={24} decimal={1} onUpdate={v => updated('tone', 0, v)} />
-				<Slider value={tone[1]} label={'l\''} min={0} max={10} decimal={1} onUpdate={v => updated('tone', 1, v)} />
+				<Slider value={tone[0]} label={'h'} min={0} max={24} decimal={1} onUpdate={v => updated(ColorSpace.Tone, 0, v)} />
+				<Slider value={tone[1]} label={'l\''} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.Tone, 1, v)} />
 				<output>{pccsStr}</output>
 			</fieldset>
 		</div>
@@ -169,6 +163,8 @@
 	:is(.colorL, .colorR) {
 		width: 4rem;
 		aspect-ratio: 1;
+		appearance: none;
+		border: 1px solid #fff;
 
 		&.selected {
 			outline: 2px solid #000;
