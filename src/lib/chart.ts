@@ -1,4 +1,4 @@
-import { Color, Evaluation } from 'colorjst/src/colorjst';
+import { Color, Difference } from 'iroay/iroay';
 
 type Pair = [number, number];
 type Triplet = [number, number, number];
@@ -23,7 +23,7 @@ export abstract class Chart {
 	// -------------------------------------------------------------------------
 
 
-	public drawMap(ctx: CanvasRenderingContext2D, base: Color, isSaturationVisible: boolean, isIsochromaticEllipsisVisible: boolean, vision: null | 'p' | 'd'): void {
+	public drawMap(ctx: CanvasRenderingContext2D, base: Color, isSaturationVisible: boolean, isIsochromaticEllipsisVisible: boolean, vision: '' | 'p' | 'd'): void {
 		const width = ctx.canvas.width, height = ctx.canvas.height;
 		ctx.fillStyle = '#f0f0f0';
 		ctx.fillRect(0, 0, width, height);
@@ -38,7 +38,7 @@ export abstract class Chart {
 
 				if (isIsochromaticEllipsisVisible) {
 					const d = cSim.distanceTo(baseSim) * 0.92;
-					if (Math.abs(Evaluation.NBS_APPRECIABLE - d) < 0.14) {
+					if (Math.abs(Difference.NBS_APPRECIABLE - d) < 0.14) {
 						ctx.fillStyle = '#fff';
 						ctx.fillRect(x, y, 1, 1);
 						continue;
@@ -52,7 +52,7 @@ export abstract class Chart {
 		}
 	}
 
-	private simulateVision(src: Color, vision: null | 'p' | 'd') {
+	private simulateVision(src: Color, vision: '' | 'p' | 'd') {
 		switch (vision) {
 			case 'p': return src.toProtanopia();
 			case 'd': return src.toDeuteranopia();

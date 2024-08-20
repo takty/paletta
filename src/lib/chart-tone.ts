@@ -1,4 +1,4 @@
-import { Color, ColorSpace } from 'colorjst/src/colorjst';
+import { Color, ColorSpace } from 'iroay/iroay';
 import { Chart } from '$lib/chart';
 
 type Pair = [number, number];

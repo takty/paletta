@@ -1,8 +1,7 @@
-<!-- ColorChart.svelte -->
+<!-- color-chart.svelte -->
 <script lang="ts" type="module">
 	import { onMount } from 'svelte';
-	import { Color, ColorSpace } from 'colorjst/src/colorjst';
-	import { Chart } from '$lib/chart';
+	import { Color, ColorSpace } from 'iroay/iroay';
 	import { ChartLab } from '$lib/chart-lab';
 	import { ChartYxy } from '$lib/chart-yxy';
 	import { ChartMunsell } from '$lib/chart-munsell';
@@ -12,20 +11,28 @@
 	export let width = 256;
 	export let height = 256;
 
+	export let vision: '' | 'p' | 'd' = '';
 	export let isSaturationVisible = false;
-	export let isUnsaturationMarkerVisible = true;
-	export let isIsochromaticEllipsisVisible = true;
 
-	export let vision: null | 'p' | 'd' = null;
 	export let isProtanopiaMarkerVisible = false;
 	export let isDeuteranopiaMarkerVisible = false;
+	export let isUnsaturationMarkerVisible = true;
+	export let isIsochromaticEllipsisVisible = true;
 
 	export let chart: 'lab' | 'yxy' | 'munsell' | 'pccs' | 'tone' = 'lab';
 	export let current = 0;
 	export let value: Color;
 	export let onUpdate: (c: Color) => void;
 
-	let curChart: Chart = new ChartLab();
+	const chartToObj = {
+		'lab': new ChartLab(),
+		'yxy': new ChartYxy(),
+		'munsell': new ChartMunsell(),
+		'pccs': new ChartPCCS(),
+		'tone': new ChartTone(),
+	};
+
+	$: curChart = chartToObj[chart];
 	const ms: [Color, Color] = [new Color(), new Color()];
 	const ls = ['L', 'R'];
 
@@ -37,9 +44,6 @@
 	});
 
 	$: {
-		if (ctx) update(value);
-	}
-	$: {
 		switch (chart) {
 			case 'lab': curChart = new ChartLab(); break;
 			case 'yxy': curChart = new ChartYxy(); break;
@@ -47,6 +51,14 @@
 			case 'pccs': curChart = new ChartPCCS(); break;
 			case 'tone': curChart = new ChartTone(); break;
 		}
+		vision = vision;
+		isSaturationVisible = isSaturationVisible;
+		isProtanopiaMarkerVisible = isProtanopiaMarkerVisible;
+		isDeuteranopiaMarkerVisible = isDeuteranopiaMarkerVisible;
+		isUnsaturationMarkerVisible = isUnsaturationMarkerVisible;
+		isIsochromaticEllipsisVisible = isIsochromaticEllipsisVisible;
+
+		if (ctx) update(value);
 	}
 
 	function update(value: Color) {

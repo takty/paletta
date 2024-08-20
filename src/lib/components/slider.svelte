@@ -96,7 +96,7 @@
 		background-color: green;
 	}
 	input[type='number'] {
-		width: 4rem;
+		width: 4.5rem;
 		text-align: end;
 	}
 </style>
