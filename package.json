@@ -18,14 +18,14 @@
     "tailwindcss": "^3.4.10",
     "tslib": "^2.6.3",
     "typescript": "^5.5.4",
-    "vite": "^5.4.1"
+    "vite": "^5.4.2"
   },
   "packageManager": "yarn@1.22.22",
   "dependencies": {
     "bits-ui": "^0.21.13",
     "clsx": "^2.1.1",
     "iroay": "github:takty/iroay",
-    "lucide-svelte": "^0.428.0",
+    "lucide-svelte": "^0.429.0",
     "tailwind-merge": "^2.5.2",
     "tailwind-variants": "^0.2.1"
   }
