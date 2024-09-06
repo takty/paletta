@@ -140,73 +140,71 @@
 		></ColorChart>
 	</div>
 
-	<div class="flex flex-row gap-x-4">
-		<div class="flex flex-col gap-y-4 h-fit">
-			<Card.Root class="">
-				<Card.Header>
-					<Card.Title>sRGB</Card.Title>
-				</Card.Header>
-				<Card.Content>
-					<Slider value={rgb[0]} label={'R'} min={0} max={255} onUpdate={v => updated(ColorSpace.RGB, 0, v)} />
-					<Slider value={rgb[1]} label={'G'} min={0} max={255} onUpdate={v => updated(ColorSpace.RGB, 1, v)} />
-					<Slider value={rgb[2]} label={'B'} min={0} max={255} onUpdate={v => updated(ColorSpace.RGB, 2, v)} />
-				</Card.Content>
-			</Card.Root>
+	<div class="flex flex-col gap-y-4 h-fit">
+		<Card.Root class="">
+			<Card.Header>
+				<Card.Title>sRGB</Card.Title>
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-1">
+				<Slider value={rgb[0]} label={'R'} min={0} max={255} onUpdate={v => updated(ColorSpace.RGB, 0, v)} />
+				<Slider value={rgb[1]} label={'G'} min={0} max={255} onUpdate={v => updated(ColorSpace.RGB, 1, v)} />
+				<Slider value={rgb[2]} label={'B'} min={0} max={255} onUpdate={v => updated(ColorSpace.RGB, 2, v)} />
+			</Card.Content>
+		</Card.Root>
 
-			<Card.Root class="">
-				<Card.Header>
-					<Card.Title>CIELAB (L*a*b*)</Card.Title>
-				</Card.Header>
-				<Card.Content>
-					<Slider value={lab[0]} label={'L*'} min={0} max={100} onUpdate={v => updated(ColorSpace.Lab, 0, v)} />
-					<Slider value={lab[1]} label={'a*'} min={-128} max={127} onUpdate={v => updated(ColorSpace.Lab, 1, v)} />
-					<Slider value={lab[2]} label={'b*'} min={-128} max={127} onUpdate={v => updated(ColorSpace.Lab, 2, v)} />
-					<Separator class="my-2"></Separator>
-					<Slider value={lch[1]} label={'C*'} min={0} max={181} onUpdate={v => updated(ColorSpace.LCh, 1, v)} />
-					<Slider value={lch[2]} label={'h'} min={0} max={360} onUpdate={v => updated(ColorSpace.LCh, 2, v)} />
-				</Card.Content>
-			</Card.Root>
+		<Card.Root class="">
+			<Card.Header>
+				<Card.Title>CIELAB (L*a*b*)</Card.Title>
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-1">
+				<Slider value={lab[0]} label={'L*'} min={0} max={100} onUpdate={v => updated(ColorSpace.Lab, 0, v)} />
+				<Slider value={lab[1]} label={'a*'} min={-128} max={127} onUpdate={v => updated(ColorSpace.Lab, 1, v)} />
+				<Slider value={lab[2]} label={'b*'} min={-128} max={127} onUpdate={v => updated(ColorSpace.Lab, 2, v)} />
+				<Separator class="my-2"></Separator>
+				<Slider value={lch[1]} label={'C*'} min={0} max={181} onUpdate={v => updated(ColorSpace.LCh, 1, v)} />
+				<Slider value={lch[2]} label={'h'} min={0} max={360} onUpdate={v => updated(ColorSpace.LCh, 2, v)} />
+			</Card.Content>
+		</Card.Root>
 
-			<Card.Root class="">
-				<Card.Header>
-					<Card.Title>Yxy</Card.Title>
-				</Card.Header>
-				<Card.Content>
-					<Slider value={yxy[0]} label={'Y'} min={0} max={1} decimal={2} onUpdate={v => updated(ColorSpace.Yxy, 0, v)} />
-					<Slider value={yxy[1]} label={'x'} min={0.0050} max={0.85} decimal={4} onUpdate={v => updated(ColorSpace.Yxy, 1, v)} />
-					<Slider value={yxy[2]} label={'y'} min={0.0050} max={0.85} decimal={4} onUpdate={v => updated(ColorSpace.Yxy, 2, v)} />
-				</Card.Content>
-			</Card.Root>
-		</div>
+		<Card.Root class="">
+			<Card.Header>
+				<Card.Title>Yxy</Card.Title>
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-1">
+				<Slider value={yxy[0]} label={'Y'} min={0} max={1} decimal={2} onUpdate={v => updated(ColorSpace.Yxy, 0, v)} />
+				<Slider value={yxy[1]} label={'x'} min={0.0050} max={0.85} decimal={4} onUpdate={v => updated(ColorSpace.Yxy, 1, v)} />
+				<Slider value={yxy[2]} label={'y'} min={0.0050} max={0.85} decimal={4} onUpdate={v => updated(ColorSpace.Yxy, 2, v)} />
+			</Card.Content>
+		</Card.Root>
+	</div>
 
-		<div class="flex flex-col gap-y-4 h-fit">
-			<Card.Root class="">
-				<Card.Header>
-					<Card.Title>Munsell</Card.Title>
-				</Card.Header>
-				<Card.Content>
-					<Slider value={mun[0]} label={'H'} min={0} max={100} decimal={1} onUpdate={v => updated(ColorSpace.Munsell, 0, v)} />
-					<Slider value={mun[1]} label={'V'} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.Munsell, 1, v)} />
-					<Slider value={mun[2]} label={'C'} min={0} max={46.7} decimal={1} onUpdate={v => updated(ColorSpace.Munsell, 2, v)} />
-					<output class="flex text-sm mt-2 min-h-5">{munStr}</output>
-				</Card.Content>
-			</Card.Root>
+	<div class="flex flex-col gap-y-4 h-fit">
+		<Card.Root class="">
+			<Card.Header>
+				<Card.Title>Munsell</Card.Title>
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-1">
+				<Slider value={mun[0]} label={'H'} min={0} max={100} decimal={1} onUpdate={v => updated(ColorSpace.Munsell, 0, v)} />
+				<Slider value={mun[1]} label={'V'} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.Munsell, 1, v)} />
+				<Slider value={mun[2]} label={'C'} min={0} max={46.7} decimal={1} onUpdate={v => updated(ColorSpace.Munsell, 2, v)} />
+				<output class="flex text-sm mt-2 min-h-5">{munStr}</output>
+			</Card.Content>
+		</Card.Root>
 
-			<Card.Root class="">
-				<Card.Header>
-					<Card.Title>PCCS</Card.Title>
-					<!-- <Card.Description></Card.Description> -->
-				</Card.Header>
-				<Card.Content>
-					<Slider value={pccs[0]} label={'h'} min={0} max={24} decimal={1} onUpdate={v => updated(ColorSpace.PCCS, 0, v)} />
-					<Slider value={pccs[1]} label={'l'} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.PCCS, 1, v)} />
-					<Slider value={pccs[2]} label={'s'} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.PCCS, 2, v)} />
-					<Separator class="my-2"></Separator>
-					<Slider value={tone[0]} label={'h'} min={0} max={24} decimal={1} onUpdate={v => updated(ColorSpace.Tone, 0, v)} />
-					<Slider value={tone[1]} label={'l\''} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.Tone, 1, v)} />
-					<output class="flex text-sm mt-2 min-h-5">{pccsStr}</output>
-				</Card.Content>
-			</Card.Root>
-		</div>
+		<Card.Root class="">
+			<Card.Header>
+				<Card.Title>PCCS</Card.Title>
+				<!-- <Card.Description></Card.Description> -->
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-1">
+				<Slider value={pccs[0]} label={'h'} min={0} max={24} decimal={1} onUpdate={v => updated(ColorSpace.PCCS, 0, v)} />
+				<Slider value={pccs[1]} label={'l'} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.PCCS, 1, v)} />
+				<Slider value={pccs[2]} label={'s'} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.PCCS, 2, v)} />
+				<Separator class="my-2"></Separator>
+				<Slider value={tone[0]} label={'h'} min={0} max={24} decimal={1} onUpdate={v => updated(ColorSpace.Tone, 0, v)} />
+				<Slider value={tone[1]} label={'l\''} min={0} max={10} decimal={1} onUpdate={v => updated(ColorSpace.Tone, 1, v)} />
+				<output class="flex text-sm mt-2 min-h-5">{pccsStr}</output>
+			</Card.Content>
+		</Card.Root>
 	</div>
 </div>
