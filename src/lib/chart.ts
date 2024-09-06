@@ -38,7 +38,7 @@ export abstract class Chart {
 
 				if (isIsochromaticEllipsisVisible) {
 					const d = cSim.distanceTo(baseSim) * 0.92;
-					if (Math.abs(Difference.NBS_APPRECIABLE - d) < 0.14) {
+					if (Math.abs(Difference.NBS.APPRECIABLE - d) < 0.14) {
 						ctx.fillStyle = '#fff';
 						ctx.fillRect(x, y, 1, 1);
 						continue;
