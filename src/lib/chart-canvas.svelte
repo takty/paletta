@@ -41,7 +41,7 @@
 
 		chart    = 'lab',
 		current  = 0,
-		value    = new Color(),
+		value    = $bindable(new Color()),
 		onupdate = (c: Color): void => {},
 	} : Props = $props();
 

@@ -13,65 +13,63 @@
 
 	type Triplet = [number, number, number];
 
-	let rgb : Triplet = [0, 0, 0];
-	let lab : Triplet = [0, 0, 0];
-	let lch : Triplet = [0, 0, 0];
-	let yxy : Triplet = [0, 0.0005, 0.0005];
-	let mun : Triplet = [0, 0, 0];
-	let pccs: Triplet = [0, 0, 0];
-	let tone: Triplet = [0, 0, 0];
+	let rgb    : Triplet = $state([0, 0, 0]);
+	let lab    : Triplet = $state([0, 0, 0]);
+	let lch    : Triplet = $state([0, 0, 0]);
+	let yxy    : Triplet = $state([0, 0.0005, 0.0005]);
+	let mun    : Triplet = $state([0, 0, 0]);
+	let pccs   : Triplet = $state([0, 0, 0]);
+	let tone   : Triplet = $state([0, 0, 0]);
+	let munStr : string  = $state('');
+	let pccsStr: string  = $state('');
 
-	let munStr  = '';
-	let pccsStr = '';
+	let current : number = $state(0);
+	let colorCur: Color  = $state(new Color());
+	let colorL  : Color  = $state(new Color());
+	let colorR  : Color  = $state(new Color());
 
-	const ms = [new Color(), new Color()];
-	let current: number = 0;
+	let chart: 'lab' | 'yxy' | 'munsell' | 'pccs' | 'tone' = $state('lab');
+	let vision: '' | 'p' | 'd' = $state('');
 
-	let colorL: Color = ms[0];
-	let colorR: Color = ms[1];
+	let isSaturationVisible          : boolean = $state(false);
+	let isIsochromaticEllipsisVisible: boolean = $state(false);
 
-	let chart: 'lab' | 'yxy' | 'munsell' | 'pccs' | 'tone' = 'lab';
-	let vision: '' | 'p' | 'd' = '';
-
-	let isSaturationVisible = false;
-	let isIsochromaticEllipsisVisible = false;
-
-	let isUnsaturationMarkerVisible = false;
-	let isProtanopiaMarkerVisible = false;
-	let isDeuteranopiaMarkerVisible = false;
+	let isUnsaturationMarkerVisible  : boolean = $state(false);
+	let isProtanopiaMarkerVisible    : boolean = $state(false);
+	let isDeuteranopiaMarkerVisible  : boolean = $state(false);
 
 	function updatedAll(c: Color): void {
-		ms[current] = c;
+		colorCur = c;
 		updateValues();
 	}
 
 	function updated(cs: ColorSpace, idx: number, v: number): void {
-		const t = ms[current].as(cs);
+		const t: Triplet = colorCur.as(cs);
 		t[idx] = v;
-		ms[current].set(cs, t);
+		colorCur = new Color(cs, t);
 		updateValues();
 	}
 
-	function updateValues() {
-		rgb = ms[current].asRGB();
-		lab = ms[current].asLab();
-		lch = ms[current].asLCh();
-		yxy = ms[current].asYxy();
+	function updateValues(): void {
+		rgb     = colorCur.asRGB();
+		lab     = colorCur.asLab();
+		lch     = colorCur.asLCh();
+		yxy     = colorCur.asYxy();
+		mun     = colorCur.asMunsell();
+		pccs    = colorCur.asPCCS();
+		tone    = colorCur.asTone();
+		munStr  = colorCur.asMunsellNotation();
+		pccsStr = colorCur.asPCCSNotation();
 
-		mun  = ms[current].asMunsell();
-		pccs = ms[current].asPCCS();
-		tone = ms[current].asTone();
-
-		munStr  = ms[current].asMunsellNotation();
-		pccsStr = ms[current].asPCCSNotation();
-
-		ms[current] = ms[current];
-		if (0 === current) colorL = ms[0];
-		if (1 === current) colorR = ms[1];
+		colorCur = colorCur;
+		if (0 === current) colorL = colorCur;
+		if (1 === current) colorR = colorCur;
 	}
 
 	function clickColorBtn(c: number): void {
 		current = c;
+		if (0 === current) colorCur = colorL;
+		if (1 === current) colorCur = colorR;
 		updateValues();
 	}
 
@@ -127,7 +125,7 @@
 		<ColorChart
 			width={256}
 			height={256}
-			value={ms[current]}
+			value={colorCur}
 			{current}
 			onupdate={updatedAll}
 			{chart}
