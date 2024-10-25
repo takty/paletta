@@ -1,7 +1,7 @@
 import { Color, ColorSpace } from 'iroay/iroay';
 import { Chart } from '$lib/chart';
 
-type Pair = [number, number];
+type Pair    = [number, number];
 type Triplet = [number, number, number];
 
 export class ChartTone extends Chart {
@@ -19,19 +19,19 @@ export class ChartTone extends Chart {
 	}
 
 	public getMapZLevel(base: Color, c: Color) {
-		const x = c.asTone()[0];
-		const o = base.asTone()[0];
+		const x: number = c.asTone()[0];
+		const o: number = base.asTone()[0];
 
 		if (Math.abs(o - x) < 0.01) return 'same';
 		if (o < x) return 'high';
 		return 'low';
 	}
 
-	static MS = 10;
-	static ML = 10;
+	static MS: number = 10;
+	static ML: number = 10;
 
 	public cToXy(c: Color): Pair {
-		const t = c.asTone();
+		const t: Triplet = c.asTone();
 		if (t[0] === -1) {
 			return [0, 0];
 		}
@@ -42,7 +42,7 @@ export class ChartTone extends Chart {
 	}
 
 	public xyToC(base: Color, x: number, y: number, dest: Color): void {
-		const tb = base.asTone();
+		const tb: Triplet = base.asTone();
 
 		const tn = [
 			tb[0],
@@ -53,8 +53,8 @@ export class ChartTone extends Chart {
 	}
 
 	public dToC(base: Color, d: number, dest: Color): void {
-		const tb = base.asTone();
-		let y = tb[0] + (d > 0 ? 0.1 : -0.1);
+		const tb: Triplet = base.asTone();
+		let y: number = tb[0] + (d > 0 ? 0.1 : -0.1);
 		if (y < 0) y = 0;
 		if (10 < y) y = 10;
 

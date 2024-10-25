@@ -1,6 +1,6 @@
 import { Color, Difference } from 'iroay/iroay';
 
-type Pair = [number, number];
+type Pair    = [number, number];
 type Triplet = [number, number, number];
 
 export abstract class Chart {
@@ -24,20 +24,21 @@ export abstract class Chart {
 
 
 	public drawMap(ctx: CanvasRenderingContext2D, base: Color, isSaturationVisible: boolean, isIsochromaticEllipsisVisible: boolean, vision: '' | 'p' | 'd'): void {
-		const width = ctx.canvas.width, height = ctx.canvas.height;
+		const width : number = ctx.canvas.width;
+		const height: number = ctx.canvas.height;
 		ctx.fillStyle = '#f0f0f0';
 		ctx.fillRect(0, 0, width, height);
 
 		const c: Color = new Color();
 		const baseSim: Color = this.simulateVision(base, vision);
 
-		for (let y = 0; y < height; ++y) {
-			for (let x = 0; x < width; ++x) {
+		for (let y: number = 0; y < height; ++y) {
+			for (let x: number = 0; x < width; ++x) {
 				this.xyToC(base, x / width, y / height, c);
 				const cSim: Color = this.simulateVision(c, vision);
 
 				if (isIsochromaticEllipsisVisible) {
-					const d = cSim.distanceTo(baseSim) * 0.92;
+					const d: number = cSim.distanceTo(baseSim) * 0.92;
 					if (Math.abs(Difference.NBS.APPRECIABLE - d) < 0.14) {
 						ctx.fillStyle = '#fff';
 						ctx.fillRect(x, y, 1, 1);
@@ -45,7 +46,7 @@ export abstract class Chart {
 					}
 				}
 				if (isSaturationVisible || !c.isRGBSaturated(true)) {
-					const rgb = cSim.asRGB();
+					const rgb: Triplet = cSim.asRGB();
 					this.setPixel(ctx, x, y, rgb);
 				}
 			}
@@ -71,8 +72,8 @@ export abstract class Chart {
 
 	public drawMarker(ctx: CanvasRenderingContext2D, c: Color, base: Color, fill: string, stroke: string, str: string): void {
 		const [lx, ly] = this.cToXy(c);
-		const x = lx * ctx.canvas.width;
-		const y = ly * ctx.canvas.height;
+		const x: number = lx * ctx.canvas.width;
+		const y: number = ly * ctx.canvas.height;
 
 		ctx.save();
 		ctx.fillStyle = fill;
