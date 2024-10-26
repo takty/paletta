@@ -96,11 +96,13 @@
 
 	function pointMap({ offsetX: x, offsetY: y }: { offsetX: number, offsetY: number }): void {
 		cc.xyToC(cs[current], x / width, y / height, cs[current]);
+		update(value, current);
 		onupdate(cs[current]);
 	}
 
 	function wheelMap({ deltaY: d }: { deltaY: number }): void {
 		cc.dToC(cs[current], d, cs[current]);
+		update(value, current);
 		onupdate(cs[current]);
 	}
 </script>
