@@ -38,15 +38,15 @@ export abstract class Chart {
 				const cSim: Color = this.simulateVision(c, vision);
 
 				if (isIsochromaticEllipsisVisible) {
-					const d: number = cSim.distanceTo(baseSim) * 0.92;
-					if (Math.abs(Difference.NBS.APPRECIABLE - d) < 0.14) {
+					const d: number = cSim.differenceFrom(baseSim) * 0.92;
+					if (Math.abs(Difference.NBS.Appreciable - d) < 0.14) {
 						ctx.fillStyle = '#fff';
 						ctx.fillRect(x, y, 1, 1);
 						continue;
 					}
 				}
 				if (isSaturationVisible || !c.isRGBSaturated(true)) {
-					const rgb: Triplet = cSim.asRGB();
+					const rgb: Triplet = cSim.asRgb();
 					this.setPixel(ctx, x, y, rgb);
 				}
 			}

@@ -22,8 +22,8 @@
 	let colorRStr: string = $state('');
 
 	$effect((): void => {
-		const tl: Triplet = colorL.asRGB();
-		const tr: Triplet = colorR.asRGB();
+		const tl: Triplet = colorL.asRgb();
+		const tr: Triplet = colorR.asRgb();
 		colorLStr = `rgb(${tl[0]}, ${tl[1]}, ${tl[2]})`;
 		colorRStr = `rgb(${tr[0]}, ${tr[1]}, ${tr[2]})`;
 	});

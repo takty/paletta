@@ -16,7 +16,7 @@
 	let rgb    : Triplet = $state([0, 0, 0]);
 	let lab    : Triplet = $state([0, 0, 0]);
 	let lch    : Triplet = $state([0, 0, 0]);
-	let yxy    : Triplet = $state([0, 0.0005, 0.0005]);
+	let xyy    : Triplet = $state([0.0005, 0.0005, 0]);
 	let mun    : Triplet = $state([0, 0, 0]);
 	let pccs   : Triplet = $state([0, 0, 0]);
 	let tone   : Triplet = $state([0, 0, 0]);
@@ -51,12 +51,12 @@
 	}
 
 	function updateValues(): void {
-		rgb     = colorCur.asRGB();
+		rgb     = colorCur.asRgb();
 		lab     = colorCur.asLab();
-		lch     = colorCur.asLCh();
-		yxy     = colorCur.asYxy();
+		lch     = colorCur.asLch();
+		xyy     = colorCur.asXyy();
 		mun     = colorCur.asMunsell();
-		pccs    = colorCur.asPCCS();
+		pccs    = colorCur.asPccs();
 		tone    = colorCur.asTone();
 		munStr  = colorCur.asMunsellNotation();
 		pccsStr = colorCur.asPCCSNotation();
@@ -84,7 +84,7 @@
 		<Menubar.Content>
 			<Menubar.RadioGroup bind:value={chart}>
 				<Menubar.RadioItem value="lab">L*a*b*</Menubar.RadioItem>
-				<Menubar.RadioItem value="yxy">Yxy</Menubar.RadioItem>
+				<Menubar.RadioItem value="xyy">xyY</Menubar.RadioItem>
 				<Menubar.RadioItem value="munsell">Munsell</Menubar.RadioItem>
 				<Menubar.RadioItem value="pccs">PCCS</Menubar.RadioItem>
 				<Menubar.RadioItem value="tone">PCCS Tone</Menubar.RadioItem>
@@ -144,9 +144,9 @@
 				<Card.Title>sRGB</Card.Title>
 			</Card.Header>
 			<Card.Content class="flex flex-col gap-1">
-				<Slider value={rgb[0]} label={'R'} min={0} max={255} onupdate={v => updated(ColorSpace.RGB, 0, v)} />
-				<Slider value={rgb[1]} label={'G'} min={0} max={255} onupdate={v => updated(ColorSpace.RGB, 1, v)} />
-				<Slider value={rgb[2]} label={'B'} min={0} max={255} onupdate={v => updated(ColorSpace.RGB, 2, v)} />
+				<Slider value={rgb[0]} label={'R'} min={0} max={255} onupdate={v => updated(ColorSpace.Rgb, 0, v)} />
+				<Slider value={rgb[1]} label={'G'} min={0} max={255} onupdate={v => updated(ColorSpace.Rgb, 1, v)} />
+				<Slider value={rgb[2]} label={'B'} min={0} max={255} onupdate={v => updated(ColorSpace.Rgb, 2, v)} />
 			</Card.Content>
 		</Card.Root>
 
@@ -159,19 +159,19 @@
 				<Slider value={lab[1]} label={'a*'} min={-128} max={127} onupdate={v => updated(ColorSpace.Lab, 1, v)} />
 				<Slider value={lab[2]} label={'b*'} min={-128} max={127} onupdate={v => updated(ColorSpace.Lab, 2, v)} />
 				<Separator class="my-2"></Separator>
-				<Slider value={lch[1]} label={'C*'} min={0} max={181} onupdate={v => updated(ColorSpace.LCh, 1, v)} />
-				<Slider value={lch[2]} label={'h'} min={0} max={360} onupdate={v => updated(ColorSpace.LCh, 2, v)} />
+				<Slider value={lch[1]} label={'C*'} min={0} max={181} onupdate={v => updated(ColorSpace.Lch, 1, v)} />
+				<Slider value={lch[2]} label={'h'} min={0} max={360} onupdate={v => updated(ColorSpace.Lch, 2, v)} />
 			</Card.Content>
 		</Card.Root>
 
 		<Card.Root class="">
 			<Card.Header>
-				<Card.Title>Yxy</Card.Title>
+				<Card.Title>xyY</Card.Title>
 			</Card.Header>
 			<Card.Content class="flex flex-col gap-1">
-				<Slider value={yxy[0]} label={'Y'} min={0} max={1} decimal={2} onupdate={v => updated(ColorSpace.Yxy, 0, v)} />
-				<Slider value={yxy[1]} label={'x'} min={0.0050} max={0.85} decimal={4} onupdate={v => updated(ColorSpace.Yxy, 1, v)} />
-				<Slider value={yxy[2]} label={'y'} min={0.0050} max={0.85} decimal={4} onupdate={v => updated(ColorSpace.Yxy, 2, v)} />
+				<Slider value={xyy[0]} label={'x'} min={0.0050} max={0.85} decimal={4} onupdate={v => updated(ColorSpace.Xyy, 0, v)} />
+				<Slider value={xyy[1]} label={'y'} min={0.0050} max={0.85} decimal={4} onupdate={v => updated(ColorSpace.Xyy, 1, v)} />
+				<Slider value={xyy[2]} label={'Y'} min={0} max={1} decimal={2} onupdate={v => updated(ColorSpace.Xyy, 2, v)} />
 			</Card.Content>
 		</Card.Root>
 	</div>
@@ -195,9 +195,9 @@
 				<!-- <Card.Description></Card.Description> -->
 			</Card.Header>
 			<Card.Content class="flex flex-col gap-1">
-				<Slider value={pccs[0]} label={'h'} min={0} max={24} decimal={1} onupdate={v => updated(ColorSpace.PCCS, 0, v)} />
-				<Slider value={pccs[1]} label={'l'} min={0} max={10} decimal={1} onupdate={v => updated(ColorSpace.PCCS, 1, v)} />
-				<Slider value={pccs[2]} label={'s'} min={0} max={10} decimal={1} onupdate={v => updated(ColorSpace.PCCS, 2, v)} />
+				<Slider value={pccs[0]} label={'h'} min={0} max={24} decimal={1} onupdate={v => updated(ColorSpace.Pccs, 0, v)} />
+				<Slider value={pccs[1]} label={'l'} min={0} max={10} decimal={1} onupdate={v => updated(ColorSpace.Pccs, 1, v)} />
+				<Slider value={pccs[2]} label={'s'} min={0} max={10} decimal={1} onupdate={v => updated(ColorSpace.Pccs, 2, v)} />
 				<Separator class="my-2"></Separator>
 				<Slider value={tone[0]} label={'h'} min={0} max={24} decimal={1} onupdate={v => updated(ColorSpace.Tone, 0, v)} />
 				<Slider value={tone[1]} label={'l\''} min={0} max={10} decimal={1} onupdate={v => updated(ColorSpace.Tone, 1, v)} />

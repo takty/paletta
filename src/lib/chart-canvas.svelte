@@ -4,7 +4,7 @@
 	import { Color, ColorSpace } from 'iroay/iroay';
 	import { Chart } from '$lib/chart';
 	import { ChartLab } from '$lib/chart-lab';
-	import { ChartYxy } from '$lib/chart-yxy';
+	import { ChartXyy } from '$lib/chart-xyy';
 	import { ChartMunsell } from '$lib/chart-munsell';
 	import { ChartPCCS } from '$lib/chart-pccs';
 	import { ChartTone } from '$lib/chart-tone';
@@ -21,7 +21,7 @@
 		isUnsaturationMarkerVisible?  : boolean;
 		isIsochromaticEllipsisVisible?: boolean;
 
-		chart?   : 'lab' | 'yxy' | 'munsell' | 'pccs' | 'tone';
+		chart?   : 'lab' | 'xyy' | 'munsell' | 'pccs' | 'tone';
 		current? : number;
 		value?   : Color;
 		onupdate?: (c: Color) => void;
@@ -47,7 +47,7 @@
 
 	const chartToObj = {
 		'lab'    : new ChartLab(),
-		'yxy'    : new ChartYxy(),
+		'xyy'    : new ChartXyy(),
 		'munsell': new ChartMunsell(),
 		'pccs'   : new ChartPCCS(),
 		'tone'   : new ChartTone(),
@@ -89,7 +89,7 @@
 			if (cur === i && sat) doUsMarker = true;
 		}
 		if(isUnsaturationMarkerVisible && doUsMarker) {
-			const c = new Color(ColorSpace.RGB, cs[cur].asRGB());
+			const c = new Color(ColorSpace.Rgb, cs[cur].asRgb());
 			cc.drawMarker(ctx, c, cs[cur], '#fff', '#000', `s (${cc.getMapZ(c)})`);
 		}
 	}

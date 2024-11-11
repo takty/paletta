@@ -7,20 +7,20 @@ type Triplet = [number, number, number];
 export class ChartPCCS extends Chart {
 
 	public setTriplet(c: Color, t: Triplet): void {
-		c.set(ColorSpace.PCCS, t);
+		c.set(ColorSpace.Pccs, t);
 	}
 
 	public getTriplet(c: Color): Triplet {
-		return c.asPCCS();
+		return c.asPccs();
 	}
 
 	public getMapZ(c: Color): number {
-		return 0 | c.asPCCS()[0];
+		return 0 | c.asPccs()[0];
 	}
 
 	public getMapZLevel(base: Color, c: Color) {
-		const x: number = c.asPCCS()[0];
-		const o: number = base.asPCCS()[0];
+		const x: number = c.asPccs()[0];
+		const o: number = base.asPccs()[0];
 
 		if (Math.abs(o - x) < 0.01) return 'same';
 		if (o < x) return 'high';
@@ -30,7 +30,7 @@ export class ChartPCCS extends Chart {
 	static MS: number = 10;
 
 	public cToXy(c: Color): Pair {
-		const t: Triplet = c.asPCCS();
+		const t: Triplet = c.asPccs();
 		if (t[0] === -1 || t[2] === -1) {
 			return [0.5, 0.5];
 		}
@@ -42,7 +42,7 @@ export class ChartPCCS extends Chart {
 	}
 
 	public xyToC(base: Color, x: number, y: number, dest: Color): void {
-		const tb: Triplet = base.asPCCS();
+		const tb: Triplet = base.asPccs();
 
 		const xx : number = x - 0.5;
 		const yy : number = y - 0.5;
@@ -57,16 +57,16 @@ export class ChartPCCS extends Chart {
 			tb[1],
 			Math.sqrt((xx / 0.5 * ChartPCCS.MS) * (xx / 0.5 * ChartPCCS.MS) + (yy / 0.5 * ChartPCCS.MS) * (yy / 0.5 * ChartPCCS.MS)),
 		] as Triplet;
-		dest.set(ColorSpace.PCCS, tn);
+		dest.set(ColorSpace.Pccs, tn);
 	}
 
 	public dToC(base: Color, d: number, dest: Color): void {
-		const tb: Triplet = base.asPCCS();
+		const tb: Triplet = base.asPccs();
 		let y: number = tb[0] + (d > 0 ? 0.1 : -0.1);
 		if (y < 0) y = 0;
 		if (10 < y) y = 10;
 
-		dest.set(ColorSpace.PCCS, [tb[0], y, tb[2]]);
+		dest.set(ColorSpace.Pccs, [tb[0], y, tb[2]]);
 	}
 
 }
