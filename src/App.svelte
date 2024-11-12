@@ -2,6 +2,9 @@
 	import * as Card from "$lib/components/ui/card/index.js";
 	import * as Menubar from "$lib/components/ui/menubar/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
+	import { Button } from "$lib/components/ui/button/index.js";
+	import { Input } from "$lib/components/ui/input";
+	import { Label } from "$lib/components/ui/label";
 	import Slider from '$lib/components/slider.svelte';
 
 	import ColorChart from '$lib/chart-canvas.svelte';
@@ -14,6 +17,7 @@
 	type Triplet = [number, number, number];
 
 	let rgb    : Triplet = $state([0, 0, 0]);
+	let hsl    : Triplet = $state([0, 0, 0]);
 	let lab    : Triplet = $state([0, 0, 0]);
 	let lch    : Triplet = $state([0, 0, 0]);
 	let xyy    : Triplet = $state([0.0005, 0.0005, 0]);
@@ -28,7 +32,7 @@
 	let colorL  : Color  = $state(new Color());
 	let colorR  : Color  = $state(new Color());
 
-	let chart: 'lab' | 'yxy' | 'munsell' | 'pccs' | 'tone' = $state('lab');
+	let chart: 'lab' | 'xyy' | 'munsell' | 'pccs' | 'tone' = $state('lab');
 	let vision: '' | 'p' | 'd' = $state('');
 
 	let isSaturationVisible          : boolean = $state(false);
@@ -37,6 +41,8 @@
 	let isUnsaturationMarkerVisible  : boolean = $state(false);
 	let isProtanopiaMarkerVisible    : boolean = $state(false);
 	let isDeuteranopiaMarkerVisible  : boolean = $state(false);
+
+	let str: string = $state('');
 
 	function updatedAll(c: Color): void {
 		colorCur = c;
@@ -52,6 +58,7 @@
 
 	function updateValues(): void {
 		rgb     = colorCur.asRgb();
+		hsl     = colorCur.asHsl();
 		lab     = colorCur.asLab();
 		lch     = colorCur.asLch();
 		xyy     = colorCur.asXyy();
@@ -71,6 +78,14 @@
 		if (0 === current) colorCur = colorL;
 		if (1 === current) colorCur = colorR;
 		updateValues();
+	}
+
+	function importString(): void {
+		const c: Color | null = Color.fromString(str);
+		if (c) {
+			str = '';
+			updatedAll(c);
+		}
 	}
 
 	onMount(() => {
@@ -115,6 +130,12 @@
 	</Menubar.Menu>
 </Menubar.Root>
 
+<div class="flex items-center pt-4 px-4 gap-2 pb-1">
+	<Label for="color-str" class="whitespace-nowrap">CSS-Like Color</Label>
+	<Input type="text" id="color-str" placeholder="Color String" bind:value={str} />
+	<Button variant="secondary" onclick={importString}>Import</Button>
+</div>
+
 <div class="flex flex-row gap-x-4 p-4">
 	<div class="flex flex-col gap-4 p-1">
 		<div class="flex flex-row gap-x-4 items-center">
@@ -138,8 +159,8 @@
 		></ColorChart>
 	</div>
 
-	<div class="flex flex-col gap-y-4 h-fit">
-		<Card.Root class="">
+	<div class="columns-2xs">
+		<Card.Root class="inline-block w-full mb-4">
 			<Card.Header>
 				<Card.Title>sRGB</Card.Title>
 			</Card.Header>
@@ -150,7 +171,18 @@
 			</Card.Content>
 		</Card.Root>
 
-		<Card.Root class="">
+		<Card.Root class="inline-block w-full mb-4">
+			<Card.Header>
+				<Card.Title>HSL</Card.Title>
+			</Card.Header>
+			<Card.Content class="flex flex-col gap-1">
+				<Slider value={hsl[0]} label={'H'} min={0} max={360} onupdate={v => updated(ColorSpace.Hsl, 0, v)} />
+				<Slider value={hsl[1]} label={'S'} min={0} max={100} onupdate={v => updated(ColorSpace.Hsl, 1, v)} />
+				<Slider value={hsl[2]} label={'L'} min={0} max={100} onupdate={v => updated(ColorSpace.Hsl, 2, v)} />
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root class="inline-block w-full mb-4">
 			<Card.Header>
 				<Card.Title>CIELAB (L*a*b*)</Card.Title>
 			</Card.Header>
@@ -164,7 +196,7 @@
 			</Card.Content>
 		</Card.Root>
 
-		<Card.Root class="">
+		<Card.Root class="inline-block w-full mb-4">
 			<Card.Header>
 				<Card.Title>xyY</Card.Title>
 			</Card.Header>
@@ -174,10 +206,8 @@
 				<Slider value={xyy[2]} label={'Y'} min={0} max={1} decimal={2} onupdate={v => updated(ColorSpace.Xyy, 2, v)} />
 			</Card.Content>
 		</Card.Root>
-	</div>
 
-	<div class="flex flex-col gap-y-4 h-fit">
-		<Card.Root class="">
+		<Card.Root class="inline-block w-full mb-4">
 			<Card.Header>
 				<Card.Title>Munsell</Card.Title>
 			</Card.Header>
@@ -189,7 +219,7 @@
 			</Card.Content>
 		</Card.Root>
 
-		<Card.Root class="">
+		<Card.Root class="inline-block w-full mb-4">
 			<Card.Header>
 				<Card.Title>PCCS</Card.Title>
 				<!-- <Card.Description></Card.Description> -->

@@ -998,7 +998,7 @@ immutable@^4.0.0:
 
 "iroay@github:takty/iroay":
   version "1.0.0"
-  resolved "https://codeload.github.com/takty/iroay/tar.gz/e2929131f79a71d28d6b625827d8281c8abb13de"
+  resolved "https://codeload.github.com/takty/iroay/tar.gz/cf04472115a74edeac2dc3f826eecac71df309b2"
   dependencies:
     esbuild "^0.24.0"
     glob "^11.0.0"

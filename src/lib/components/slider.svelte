@@ -7,6 +7,7 @@
 		min?     : number;
 		max?     : number;
 		decimal? : number;
+		class?   : string;
 	}
 
 	let {
@@ -15,7 +16,8 @@
 		onupdate = (v: number): void => {},
 		min      = 0,
 		max      = 255,
-		decimal  = 0
+		decimal  = 0,
+		'class': className = undefined,
 	}: Props = $props();
 
 	let err: boolean = $state(false);
@@ -50,7 +52,7 @@
 	});
 </script>
 
-<label>
+<label class={className}>
 	<span class="key">{label}</span>
 	<input
 		type    = "range"
@@ -72,9 +74,10 @@
 
 <style>
 	label {
-		display    : flex;
-		align-items: center;
-		gap        : 0.25rem;
+		display              : grid;
+		grid-template-columns: auto 1fr auto auto;
+		align-items          : center;
+		gap                  : 0.25rem;
 	}
 	label > span:first-child {
 		display: inline-block;
