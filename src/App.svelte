@@ -88,6 +88,11 @@
 		}
 	}
 
+	function keyDown(e: KeyboardEvent): void {
+		if (e.isComposing || e.key !== 'Enter') return;
+		importString();
+	}
+
 	onMount(() => {
 		updateValues();
 	});
@@ -130,13 +135,13 @@
 	</Menubar.Menu>
 </Menubar.Root>
 
-<div class="flex items-center pt-4 px-4 gap-2 pb-1">
+<div class="flex items-center pt-4 px-4 gap-3 pb-1">
 	<Label for="color-str" class="whitespace-nowrap">CSS-Like Color</Label>
-	<Input type="text" id="color-str" placeholder="Color String" bind:value={str} />
+	<Input type="text" id="color-str" placeholder="Color String" bind:value={str} onkeydown={keyDown} />
 	<Button variant="secondary" onclick={importString}>Import</Button>
 </div>
 
-<div class="flex flex-row gap-x-4 p-4">
+<div class="flex flex-col sm:flex-row gap-x-4 p-4">
 	<div class="flex flex-col gap-4 p-1">
 		<div class="flex flex-row gap-x-4 items-center">
 			<ButtonSwitch {colorL} {colorR} onclick={clickColorBtn}></ButtonSwitch>
@@ -161,10 +166,10 @@
 
 	<div class="columns-2xs">
 		<Card.Root class="inline-block w-full mb-4">
-			<Card.Header>
+			<Card.Header class="p-4 pb-0">
 				<Card.Title>sRGB</Card.Title>
 			</Card.Header>
-			<Card.Content class="flex flex-col gap-1">
+			<Card.Content class="flex flex-col gap-1 p-4">
 				<Slider value={rgb[0]} label={'R'} min={0} max={255} onupdate={v => updated(ColorSpace.Rgb, 0, v)} />
 				<Slider value={rgb[1]} label={'G'} min={0} max={255} onupdate={v => updated(ColorSpace.Rgb, 1, v)} />
 				<Slider value={rgb[2]} label={'B'} min={0} max={255} onupdate={v => updated(ColorSpace.Rgb, 2, v)} />
@@ -172,10 +177,10 @@
 		</Card.Root>
 
 		<Card.Root class="inline-block w-full mb-4">
-			<Card.Header>
+			<Card.Header class="p-4 pb-0">
 				<Card.Title>HSL</Card.Title>
 			</Card.Header>
-			<Card.Content class="flex flex-col gap-1">
+			<Card.Content class="flex flex-col gap-1 p-4">
 				<Slider value={hsl[0]} label={'H'} min={0} max={360} onupdate={v => updated(ColorSpace.Hsl, 0, v)} />
 				<Slider value={hsl[1]} label={'S'} min={0} max={100} onupdate={v => updated(ColorSpace.Hsl, 1, v)} />
 				<Slider value={hsl[2]} label={'L'} min={0} max={100} onupdate={v => updated(ColorSpace.Hsl, 2, v)} />
@@ -183,10 +188,10 @@
 		</Card.Root>
 
 		<Card.Root class="inline-block w-full mb-4">
-			<Card.Header>
+			<Card.Header class="p-4 pb-0">
 				<Card.Title>CIELAB (L*a*b*)</Card.Title>
 			</Card.Header>
-			<Card.Content class="flex flex-col gap-1">
+			<Card.Content class="flex flex-col gap-1 p-4">
 				<Slider value={lab[0]} label={'L*'} min={0} max={100} onupdate={v => updated(ColorSpace.Lab, 0, v)} />
 				<Slider value={lab[1]} label={'a*'} min={-128} max={127} onupdate={v => updated(ColorSpace.Lab, 1, v)} />
 				<Slider value={lab[2]} label={'b*'} min={-128} max={127} onupdate={v => updated(ColorSpace.Lab, 2, v)} />
@@ -197,10 +202,10 @@
 		</Card.Root>
 
 		<Card.Root class="inline-block w-full mb-4">
-			<Card.Header>
+			<Card.Header class="p-4 pb-0">
 				<Card.Title>xyY</Card.Title>
 			</Card.Header>
-			<Card.Content class="flex flex-col gap-1">
+			<Card.Content class="flex flex-col gap-1 p-4">
 				<Slider value={xyy[0]} label={'x'} min={0.0050} max={0.85} decimal={4} onupdate={v => updated(ColorSpace.Xyy, 0, v)} />
 				<Slider value={xyy[1]} label={'y'} min={0.0050} max={0.85} decimal={4} onupdate={v => updated(ColorSpace.Xyy, 1, v)} />
 				<Slider value={xyy[2]} label={'Y'} min={0} max={1} decimal={2} onupdate={v => updated(ColorSpace.Xyy, 2, v)} />
@@ -208,10 +213,10 @@
 		</Card.Root>
 
 		<Card.Root class="inline-block w-full mb-4">
-			<Card.Header>
+			<Card.Header class="p-4 pb-0">
 				<Card.Title>Munsell</Card.Title>
 			</Card.Header>
-			<Card.Content class="flex flex-col gap-1">
+			<Card.Content class="flex flex-col gap-1 p-4">
 				<Slider value={mun[0]} label={'H'} min={0} max={100} decimal={1} onupdate={v => updated(ColorSpace.Munsell, 0, v)} />
 				<Slider value={mun[1]} label={'V'} min={0} max={10} decimal={1} onupdate={v => updated(ColorSpace.Munsell, 1, v)} />
 				<Slider value={mun[2]} label={'C'} min={0} max={46.7} decimal={1} onupdate={v => updated(ColorSpace.Munsell, 2, v)} />
@@ -220,11 +225,11 @@
 		</Card.Root>
 
 		<Card.Root class="inline-block w-full mb-4">
-			<Card.Header>
+			<Card.Header class="p-4 pb-0">
 				<Card.Title>PCCS</Card.Title>
 				<!-- <Card.Description></Card.Description> -->
 			</Card.Header>
-			<Card.Content class="flex flex-col gap-1">
+			<Card.Content class="flex flex-col gap-1 p-4">
 				<Slider value={pccs[0]} label={'h'} min={0} max={24} decimal={1} onupdate={v => updated(ColorSpace.Pccs, 0, v)} />
 				<Slider value={pccs[1]} label={'l'} min={0} max={10} decimal={1} onupdate={v => updated(ColorSpace.Pccs, 1, v)} />
 				<Slider value={pccs[2]} label={'s'} min={0} max={10} decimal={1} onupdate={v => updated(ColorSpace.Pccs, 2, v)} />
