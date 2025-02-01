@@ -12,7 +12,7 @@
 
 	let {
 		label    = '',
-		value    = 0,
+		value    = $bindable(0),
 		onupdate = (v: number): void => {},
 		min      = 0,
 		max      = 255,
@@ -23,81 +23,46 @@
 	let err: boolean = $state(false);
 	let coe: number  = $derived(Math.pow(10, decimal));
 
-	function clamp(min: number, v: number, max: number): number {
-		return Math.max(min, Math.min(v, max));
-	}
+	let min_sl: number = $derived(min * coe);
+	let max_sl: number = $derived(max * coe);
+	let step  : number = $derived(Math.pow(10, -decimal));
 
-	function checkValue(): void {
-		const cv: number = clamp(min, value, max);
-
-		err   = cv !== value;
-		value = cv;
-	}
-
-	function oninput(e: Event, coe: number = 1): void {
-		const nv: number = +(e.target as HTMLInputElement).value / coe;
-		const cv: number = clamp(min, nv, max);
-
-		err   = cv !== nv;
-		value = cv;
-		onupdate(nv);
-	}
-
-	function formatValue(v: number): string {
-		return v.toFixed(decimal);
+	function checkValue(v: number): number {
+		const cv: number = Math.max(min, Math.min(v, max));
+		err = cv !== v;
+		return cv;
 	}
 
 	$effect((): void => {
-		checkValue();
+		value = checkValue(value);
 	});
+
+	class SliderIo {
+		get io(): number {
+			return value * coe;
+		}
+		set io(v: number) {
+			value = checkValue(v / coe);
+			onupdate(value);
+		}
+	}
+	class SpinnerIo {
+		get io(): string {
+			return value.toFixed(decimal);
+		}
+		set io(v: string) {
+			value = checkValue(Number.parseFloat(v));
+			onupdate(value);
+		}
+	}
+
+	const slIo = new SliderIo();
+	const spIo = new SpinnerIo();
 </script>
 
-<label class={className}>
-	<span class="key">{label}</span>
-	<input
-		type    = "range"
-		min     = {min * coe}
-		max     = {max * coe}
-		value   = {value * coe}
-		oninput = {(e) => oninput(e, coe)}
-	/>
-	<span class="error-lamp {err ? 'active' : 'inactive'}"></span>
-	<input
-		type    = "number"
-		{min}
-		{max}
-		step    = {Math.pow(10, -decimal)}
-		value   = {formatValue(value)}
-		oninput = {(e) => oninput(e)}
-	/>
+<label class={`${className} grid grid-cols-[auto_1fr_auto_auto] items-center gap-1`}>
+	<span class="text-sm w-4 inline-block">{label}</span>
+	<input type="range" min={min_sl} max={max_sl} bind:value={slIo.io} />
+	<span class="size-2 inline-block rounded-full me-0.5 bg-green-500" class:bg-red-500={err}></span>
+	<input class="text-sm w-16 text-end" type="number" {min} {max} {step} bind:value={spIo.io} />
 </label>
-
-<style>
-	label {
-		display              : grid;
-		grid-template-columns: auto 1fr auto auto;
-		align-items          : center;
-		gap                  : 0.25rem;
-	}
-	label > span:first-child {
-		display: inline-block;
-		width  : 1rem;
-	}
-	.error-lamp {
-		width        : 8px;
-		height       : 8px;
-		border-radius: 50%;
-		display      : inline-block;
-		margin-inline: 0 2px;
-	}
-	.error-lamp.active {
-		background-color: red;
-	}
-	.error-lamp.inactive {
-		background-color: green;
-	}
-	input[type='number'] {
-		width     : 4.5rem;
-		text-align: end;
-	}
-</style>
