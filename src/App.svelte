@@ -83,7 +83,7 @@
 	<Button variant="secondary" onclick={importString}>Import</Button>
 </div>
 
-<div class="flex flex-col sm:flex-row gap-x-4 p-4">
+<div class="flex flex-col sm:flex-row gap-4 p-4">
 	<div class="flex flex-col gap-4 p-1">
 		<ColorPair bind:current={rc.current} values={rc.values}></ColorPair>
 
