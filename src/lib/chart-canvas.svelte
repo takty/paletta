@@ -1,4 +1,4 @@
-<!-- color-chart.svelte -->
+<!-- chart-canvas.svelte -->
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Color, ColorSpace } from 'iroay/iroay';
@@ -21,10 +21,9 @@
 		isUnsaturationMarkerVisible?  : boolean;
 		isIsochromaticEllipsisVisible?: boolean;
 
-		chart?   : 'lab' | 'xyy' | 'munsell' | 'pccs' | 'tone';
-		current? : number;
-		value?   : Color;
-		onupdate?: (c: Color) => void;
+		chart?  : 'lab' | 'xyy' | 'munsell' | 'pccs' | 'tone';
+		current?: number;
+		values? : [Color, Color];
 	}
 
 	let {
@@ -39,10 +38,9 @@
 		isUnsaturationMarkerVisible   = true,
 		isIsochromaticEllipsisVisible = true,
 
-		chart    = 'lab',
-		current  = 0,
-		value    = $bindable(new Color()),
-		onupdate = (c: Color): void => {},
+		chart   = 'lab',
+		current = 0,
+		values  = $bindable([new Color(), new Color()]),
 	} : Props = $props();
 
 	const chartToObj = {
@@ -53,9 +51,7 @@
 		'tone'   : new ChartTone(),
 	};
 
-	const cc: Chart = $derived(chartToObj[chart]);
-
-	const cs: [Color, Color]   = [new Color(), new Color()];
+	let cc: Chart = $derived(chartToObj[chart]);
 	const ls: [string, string] = ['L', 'R'];
 
 	let can: HTMLCanvasElement;
@@ -66,44 +62,45 @@
 	});
 
 	$effect((): void => {
-		if (ctx) update(value, current);
+		if (ctx) update(current);
 	});
 
-	function update(val: Color, cur: number): void {
-		cs[cur] = val;
-		cc.drawMap(ctx, cs[cur], isSaturationVisible, isIsochromaticEllipsisVisible, vision);
-
-		let doUsMarker: boolean = false;
-
-		for (let i: number = 0; i < cs.length; ++i) {
-			const sat: boolean = cs[i].isRGBSaturated(true);
-			const stroke = cur === i ? '#000' : '#777';
-			cc.drawMarker(ctx, cs[i], cs[cur], sat ? '#f00' : '#fff', stroke, ls[i]);
-
-			if(isProtanopiaMarkerVisible) {
-				cc.drawMarker(ctx, cs[i].toProtanopia(), cs[cur], '#fff', stroke, ls[i] + ' p');
-			}
-			if(isDeuteranopiaMarkerVisible) {
-				cc.drawMarker(ctx, cs[i].toDeuteranopia(), cs[cur], '#fff', stroke, ls[i] + ' d');
-			}
-			if (cur === i && sat) doUsMarker = true;
-		}
-		if(isUnsaturationMarkerVisible && doUsMarker) {
-			const c = new Color(ColorSpace.Rgb, cs[cur].asRgb());
-			cc.drawMarker(ctx, c, cs[cur], '#fff', '#000', `s (${cc.getMapZ(c)})`);
-		}
-	}
-
 	function pointMap({ offsetX: x, offsetY: y }: { offsetX: number, offsetY: number }): void {
-		cc.xyToC(cs[current], x / width, y / height, cs[current]);
-		update(value, current);
-		onupdate(cs[current]);
+		const temp: Color = new Color();
+		cc.xyToC(values[current], x / width, y / height, temp);
+		values[current] = temp;
+		update(current);
 	}
 
 	function wheelMap({ deltaY: d }: { deltaY: number }): void {
-		cc.dToC(cs[current], d, cs[current]);
-		update(value, current);
-		onupdate(cs[current]);
+		const temp: Color = new Color();
+		cc.dToC(values[current], d, values[current]);
+		values[current] = temp;
+		update(current);
+	}
+
+	function update(idx: number): void {
+		cc.drawMap(ctx, values[idx], isSaturationVisible, isIsochromaticEllipsisVisible, vision);
+
+		let doUsMarker: boolean = false;
+
+		for (let i: number = 0; i < values.length; ++i) {
+			const sat: boolean = values[i].isRGBSaturated(true);
+			const stroke = idx === i ? '#000' : '#777';
+			cc.drawMarker(ctx, values[i], values[idx], sat ? '#f00' : '#fff', stroke, ls[i]);
+
+			if(isProtanopiaMarkerVisible) {
+				cc.drawMarker(ctx, values[i].toProtanopia(), values[idx], '#fff', stroke, ls[i] + ' p');
+			}
+			if(isDeuteranopiaMarkerVisible) {
+				cc.drawMarker(ctx, values[i].toDeuteranopia(), values[idx], '#fff', stroke, ls[i] + ' d');
+			}
+			if (idx === i && sat) doUsMarker = true;
+		}
+		if(isUnsaturationMarkerVisible && doUsMarker) {
+			const c = new Color(ColorSpace.Rgb, values[idx].asRgb());
+			cc.drawMarker(ctx, c, values[idx], '#fff', '#000', `s (${cc.getMapZ(c)})`);
+		}
 	}
 </script>
 
