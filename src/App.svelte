@@ -37,8 +37,8 @@
 	function importString(): void {
 		const c: Color | null = Color.fromString(str);
 		if (!c) return;
-		str = '';
 		rc.set(str);
+		str = '';
 	}
 </script>
 
