@@ -9,6 +9,7 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { buttonVariants } from "$lib/components/ui/button/index.js";
 	import * as Tabs from "$lib/components/ui/tabs/index.js";
+	import { Eye, Settings, ClipboardCopy } from "lucide-svelte";
 
 	import ChartCanvas from '$lib/chart-canvas.svelte';
 	import ColorPair from '$lib/color-pair.svelte';
@@ -39,6 +40,32 @@
 		if (!c) return;
 		rc.set(str);
 		str = '';
+	}
+
+	let strRgb: string = $state('');
+	let strHex: string = $state('');
+	let strHsl: string = $state('');
+	let strLab: string = $state('');
+	let strLch: string = $state('');
+
+	$effect((): void => {
+		const c: Color = rc.values[rc.current];
+		strRgb = ColorUtil.toStringRgb(c);
+		strHex = ColorUtil.toStringHex(c);
+		strHsl = ColorUtil.toStringHsl(c);
+		strLab = ColorUtil.toStringLab(c);
+		strLch = ColorUtil.toStringLch(c);
+	});
+
+	function copyText(event: any): void {
+		const text: string = event.currentTarget.textContent.trim();
+		navigator.clipboard.writeText(text)
+		.then((): void => {
+			console.log(`Copy Successful: ${text}`);
+		})
+		.catch(err => {
+			console.error('Copy Failed:', err);
+		});
 	}
 </script>
 
@@ -72,7 +99,7 @@
 					{isDeuteranopiaMarkerVisible}
 				></ChartCanvas>
 
-				<div>
+				<div class="flex gap-2">
 					<DropdownMenu.Root>
 						<DropdownMenu.Trigger class={buttonVariants({ variant: "outline" })}>Chart</DropdownMenu.Trigger>
 						<DropdownMenu.Content>
@@ -86,7 +113,7 @@
 						</DropdownMenu.Content>
 					</DropdownMenu.Root>
 					<DropdownMenu.Root>
-						<DropdownMenu.Trigger class={buttonVariants({ variant: "outline" })}>Sim.</DropdownMenu.Trigger>
+						<DropdownMenu.Trigger class={buttonVariants({ variant: "outline" })}><Eye /></DropdownMenu.Trigger>
 						<DropdownMenu.Content>
 							<DropdownMenu.RadioGroup bind:value={vision}>
 								<DropdownMenu.RadioItem value="">None</DropdownMenu.RadioItem>
@@ -97,7 +124,7 @@
 						</DropdownMenu.Content>
 					</DropdownMenu.Root>
 					<DropdownMenu.Root>
-						<DropdownMenu.Trigger class={buttonVariants({ variant: "outline" })}>Option</DropdownMenu.Trigger>
+						<DropdownMenu.Trigger class={buttonVariants({ variant: "outline" })}><Settings /></DropdownMenu.Trigger>
 						<DropdownMenu.Content>
 							<DropdownMenu.CheckboxItem bind:checked={isSaturationVisible}>Show Saturated Colors</DropdownMenu.CheckboxItem>
 							<DropdownMenu.CheckboxItem bind:checked={isIsochromaticEllipsisVisible}>Show Isochromatic Ellipsis</DropdownMenu.CheckboxItem>
@@ -105,6 +132,18 @@
 							<DropdownMenu.CheckboxItem bind:checked={isUnsaturationMarkerVisible}>Show Un-saturation Marker</DropdownMenu.CheckboxItem>
 							<DropdownMenu.CheckboxItem bind:checked={isProtanopiaMarkerVisible}>Show Protanopia Marker</DropdownMenu.CheckboxItem>
 							<DropdownMenu.CheckboxItem bind:checked={isDeuteranopiaMarkerVisible}>Show Deuteranopia Marker</DropdownMenu.CheckboxItem>
+						</DropdownMenu.Content>
+					</DropdownMenu.Root>
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger class={buttonVariants({ variant: "outline" })}><ClipboardCopy /></DropdownMenu.Trigger>
+						<DropdownMenu.Content>
+							<DropdownMenu.Item onclick={copyText}>{strRgb}</DropdownMenu.Item>
+							<DropdownMenu.Item onclick={copyText}>{strHex}</DropdownMenu.Item>
+							<DropdownMenu.Separator />
+							<DropdownMenu.Item onclick={copyText}>{strHsl}</DropdownMenu.Item>
+							<DropdownMenu.Separator />
+							<DropdownMenu.Item onclick={copyText}>{strLab}</DropdownMenu.Item>
+							<DropdownMenu.Item onclick={copyText}>{strLch}</DropdownMenu.Item>
 						</DropdownMenu.Content>
 					</DropdownMenu.Root>
 				</div>
