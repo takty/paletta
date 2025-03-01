@@ -1,4 +1,4 @@
-import { ColorSpace, Color } from 'iroay/iroay';
+import { ColorSpace, Color, ColorUtil } from 'iroay/iroay';
 
 type Triplet = [number, number, number];
 
@@ -79,7 +79,7 @@ export class ReactiveColor {
 	}
 
 	set(str: string): void {
-		const c: Color | null = Color.fromString(str);
+		const c: Color | null = ColorUtil.fromString(str);
 		if (!c) return;
 		this.values[this.current] = c;
 	}

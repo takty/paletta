@@ -13,7 +13,7 @@
 	import ChartCanvas from '$lib/chart-canvas.svelte';
 	import ColorPair from '$lib/color-pair.svelte';
 
-	import { Color } from 'iroay/iroay';
+	import { Color, ColorUtil } from 'iroay/iroay';
 
 	let chart: 'lab' | 'xyy' | 'munsell' | 'pccs' | 'tone' = $state('lab');
 	let vision: '' | 'p' | 'd' = $state('');
@@ -35,7 +35,7 @@
 	}
 
 	function importString(): void {
-		const c: Color | null = Color.fromString(str);
+		const c: Color | null = ColorUtil.fromString(str);
 		if (!c) return;
 		rc.set(str);
 		str = '';
@@ -139,10 +139,10 @@
 					</Card.Header>
 					<Card.Content class="flex flex-col gap-1 p-4">
 						<Slider bind:value={rc.lab0} label={'L*'} min={   0} max={100} />
-						<Slider bind:value={rc.lab1} label={'a*'} min={-128} max={127} />
-						<Slider bind:value={rc.lab2} label={'b*'} min={-128} max={127} />
+						<Slider bind:value={rc.lab1} label={'a*'} min={-125} max={125} />
+						<Slider bind:value={rc.lab2} label={'b*'} min={-125} max={125} />
 						<Separator class="my-2"></Separator>
-						<Slider bind:value={rc.lch1} label={'C*'} min={0} max={181} />
+						<Slider bind:value={rc.lch1} label={'C*'} min={0} max={180} />
 						<Slider bind:value={rc.lch2} label={'h'}  min={0} max={360} />
 					</Card.Content>
 				</Card.Root>
